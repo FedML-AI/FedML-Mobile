@@ -1,3 +1,5 @@
+# FedML-Mobile: Federated Learning Research Library for Android and iOS Smartphones (supported by FedML framework)
+
 # Installation
 http://doc.fedml.ai/#/installation
 
