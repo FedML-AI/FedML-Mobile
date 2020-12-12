@@ -20,3 +20,12 @@ git add FedML
 git commit -m "updating submodule FedML to latest"
 git push
 ```
+
+
+# On-device training for Android
+
+This project aims at training NN with non-IID dataset on Android device, involving doing training independently on device and updating NN in server using FedAvg Algorithm.  
+
+This project is still in developing.  We published a demo of training a LR model built with Deeplearning4J on Android Studio.  
+
+Please check this out: https://github.com/FedML-AI/FedML-Mobile/tree/master/android/fedml-iot-sdk/src/main/java/ai/fedml/iot/service/FedML_client_training_demo
