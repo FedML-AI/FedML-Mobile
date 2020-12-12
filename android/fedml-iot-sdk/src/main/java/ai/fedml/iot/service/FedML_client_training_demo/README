@@ -1,0 +1,4 @@
+12/11/2020
+This demo is an independent app presenting training a Logistic Regression model built with Deeplearning4J for one client
+The demo assumes that all the partitioned datasets have been downloaded on the local.
+Future work is to fix the communication between client and server, in order to request specific datasets from server and update model parameters to server.
