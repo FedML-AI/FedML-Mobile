@@ -1,12 +1,14 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
-    buildToolsVersion build_version
-    compileSdkVersion compile_version
+    buildToolsVersion BUILD_TOOLS_VERSION
+    compileSdkVersion COMPILE_SDK_VERSION as int
 
     defaultConfig {
-        minSdkVersion min_version
-        targetSdkVersion target_version
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
         versionCode 1
         versionName "1.0"
 
@@ -18,6 +20,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            multiDexEnabled true
         }
     }
     compileOptions {

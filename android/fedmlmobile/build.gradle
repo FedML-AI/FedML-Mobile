@@ -1,12 +1,14 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    buildToolsVersion build_version
-    compileSdkVersion compile_version
+    buildToolsVersion BUILD_TOOLS_VERSION
+    compileSdkVersion COMPILE_SDK_VERSION as int
 
     defaultConfig {
-        minSdkVersion min_version
-        targetSdkVersion target_version
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
         applicationId "ai.febml.febmlmobile"
         versionCode 1
         versionName "1.0"
@@ -55,7 +57,7 @@ dependencies {
     // guava
     implementation "com.google.guava:guava:$guava_version"
     // Deeplearning4J
-    implementation (group: 'org.deeplearning4j', name: 'deeplearning4j-core', version: '{{page.version}}') {
+    implementation (group: 'org.deeplearning4j', name: 'deeplearning4j-core', version: '1.0.0-beta7') {
         exclude group: 'org.bytedeco', module: 'opencv-platform'
         exclude group: 'org.bytedeco', module: 'leptonica-platform'
         exclude group: 'org.bytedeco', module: 'hdf5-platform'
