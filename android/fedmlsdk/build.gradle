@@ -32,7 +32,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     // SDK
@@ -44,7 +44,6 @@ dependencies {
     implementation group: 'com.squareup.okio', name: 'okio', version: okio_version
     annotationProcessor "org.projectlombok:lombok:$lombok_version"
     compileOnly "org.projectlombok:lombok:$lombok_version"
-    testCompileOnly "org.projectlombok:lombok:$lombok_version"
     testAnnotationProcessor "org.projectlombok:lombok:$lombok_version"
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.dagger:dagger:$dagger_version"
