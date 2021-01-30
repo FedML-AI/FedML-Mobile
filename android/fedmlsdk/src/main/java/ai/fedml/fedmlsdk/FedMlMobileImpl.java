@@ -27,8 +27,8 @@ class FedMlMobileImpl implements FedMlMobileApi {
     }
 
     @Override
-    public void downloadFile(@NonNull String fileName, @NonNull String url) {
-        mTrainingExecutor.downloadFile(fileName, url);
+    public void downloadFile(@NonNull String dataSetName, @NonNull String fileName, @NonNull String url) {
+        mTrainingExecutor.downloadFile(dataSetName, fileName, url);
     }
 
     @Override

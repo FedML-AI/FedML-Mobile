@@ -26,10 +26,11 @@ public interface FedMlMobileApi {
     /**
      * download files,such as the data set.
      *
-     * @param fileName the name to save
-     * @param url      the utl of the file
+     * @param dataSetName the name of data set
+     * @param fileName    the name to save
+     * @param url         the utl of the file
      */
-    void downloadFile(@NonNull final String fileName, @NonNull final String url);
+    void downloadFile(@NonNull String dataSetName, @NonNull final String fileName, @NonNull final String url);
 
     /**
      * send message to executor

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.StatFs;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.google.common.io.Files;
 
 import java.io.BufferedInputStream;
@@ -16,13 +14,14 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ai.fedml.fedmlsdk.ContextHolder;
-import lombok.Cleanup;
+import androidx.annotation.NonNull;
 
 public class StorageUtils {
+    private static final String TAG = "StorageUtils";
     private static final String LOG_DIR = "logs";
     private static final String MODEL_DIR = "models";
     private static final String LABEL_DATA_DIR = "labeldata";
-    public static final int BUFFER_SIZE = 8192;
+    private static final int BUFFER_SIZE = 8192;
 
     /**
      * get dir Available size
@@ -100,20 +99,20 @@ public class StorageUtils {
      *
      * @param data     data
      * @param fileName FileName,relative the Label Data Path
-     * @return save success
+     * @return filePath if success return the file path, or null.
      */
-    public static boolean saveToLabelDataPath(@NonNull InputStream data, String fileName) {
+    public static String saveToLabelDataPath(@NonNull InputStream data, String fileName) {
         BufferedOutputStream bos = null;
         final String dataDir = getLabelDataPath();
         final String filePath = Files.simplifyPath(dataDir + File.separator + fileName);
         Log.d("StorageUtils", "saveToLabelDataPath: " + filePath);
         try {
             writeToFile(data, filePath);
-            return true;
+            return filePath;
         } catch (IOException e) {
             Log.e("StorageUtils", "saveToLabelDataPath", e);
         }
-        return false;
+        return null;
     }
 
     /**
@@ -141,15 +140,17 @@ public class StorageUtils {
     private static void writeToFile(@NonNull InputStream data, @NonNull String destFilePath) throws IOException {
         File destFile = new File(destFilePath);
         Files.createParentDirs(destFile);
-        @Cleanup
-        BufferedInputStream bis = new BufferedInputStream(data);
-        @Cleanup
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(destFile));
-        int bytesRead = 0;
-        byte[] buffer = new byte[BUFFER_SIZE];
-        while ((bytesRead = bis.read(buffer, 0, 8192)) != -1) {
-            bos.write(buffer, 0, bytesRead);
+        try (BufferedInputStream bis = new BufferedInputStream(data);
+             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(destFilePath)))) {
+            int bytesRead = 0;
+            byte[] buffer = new byte[BUFFER_SIZE];
+            while ((bytesRead = bis.read(buffer, 0, BUFFER_SIZE)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+            }
+            bos.flush();
+        } catch (IOException e) {
+            Log.e(TAG, "writeToFile: ", e);
+            throw e;
         }
-        bos.flush();
     }
 }

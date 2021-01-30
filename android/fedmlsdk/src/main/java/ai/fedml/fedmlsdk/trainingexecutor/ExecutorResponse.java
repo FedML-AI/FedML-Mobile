@@ -2,9 +2,6 @@ package ai.fedml.fedmlsdk.trainingexecutor;
 
 import com.google.gson.annotations.SerializedName;
 
-import lombok.Data;
-
-@Data
 public class ExecutorResponse {
     @SerializedName("errno")
     private String errno;
@@ -17,33 +14,45 @@ public class ExecutorResponse {
     @SerializedName("training_task_args")
     private TrainingTaskParam trainingTaskArgs;
 
-    @Data
-    public static class TrainingTaskParam {
-        @SerializedName("dataset")
-        private String dataSet;
-        @SerializedName("data_dir")
-        private String dataDir;
-        @SerializedName("partition_method")
-        private String partitionMethod;
-        @SerializedName("partition_alpha")
-        private String partitionAlpha;
-        @SerializedName("model")
-        private String model;
-        @SerializedName("client_num_per_round")
-        private String clientNumPerRound;
-        @SerializedName("comm_round")
-        private String commRound;
-        @SerializedName("epochs")
-        private String epochs;
-        @SerializedName("lr")
-        private String lr;
-        @SerializedName("wd")
-        private String wd;
-        @SerializedName("batch_size")
-        private String batchSize;
-        @SerializedName("frequency_of_the_test")
-        private String frequencyOfTheTest;
-        @SerializedName("is_mobile")
-        private String isMobile;
+    public String getErrno() {
+        return errno;
     }
+
+    public void setErrno(String errno) {
+        this.errno = errno;
+    }
+
+    public String getExecutorId() {
+        return executorId;
+    }
+
+    public void setExecutorId(String executorId) {
+        this.executorId = executorId;
+    }
+
+    public String getExecutorTopic() {
+        return executorTopic;
+    }
+
+    public void setExecutorTopic(String executorTopic) {
+        this.executorTopic = executorTopic;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public TrainingTaskParam getTrainingTaskArgs() {
+        return trainingTaskArgs;
+    }
+
+    public void setTrainingTaskArgs(TrainingTaskParam trainingTaskArgs) {
+        this.trainingTaskArgs = trainingTaskArgs;
+    }
+
+
 }
