@@ -19,10 +19,10 @@ public class MainViewModel extends ViewModel {
     public static final String TRAINING_EXECUTOR_MQTT = "tcp://81.71.1.31:1883";
 
     void initial(@NonNull Context context) {
-        FedMlMobileManager.getFedMlMobileApi().init(context, TRAINING_EXECUTOR_BASE_URL, TRAINING_EXECUTOR_MQTT);
-        FedMlMobileManager.getFedMlMobileApi().setFedMlTaskListener((param) -> {
-            Log.d(TAG, "FedMlTask:" + param);
-        });
+        FedMlMobileManager.getFedMlMobileApi().init(context, TRAINING_EXECUTOR_BASE_URL,
+                TRAINING_EXECUTOR_MQTT, (executorId, param) -> {
+                    Log.d(TAG, "FedMlTask:" + executorId + ", " + param);
+                });
     }
 
     void upload() {
@@ -35,8 +35,8 @@ public class MainViewModel extends ViewModel {
     }
 
     void download() {
-        FedMlMobileManager.getFedMlMobileApi().downloadFile("resource.html", TRAINING_EXECUTOR_BASE_URL
-                + "/download/resource.html");
+        FedMlMobileManager.getFedMlMobileApi().downloadUnzipDataSet("data_set",
+                "resource.html", TRAINING_EXECUTOR_BASE_URL + "/download/resource.html");
     }
 
     void sendMessage() {

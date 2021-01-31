@@ -7,8 +7,6 @@ import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.lingala.zip4j.exception.ZipException;
-
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -20,9 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-import ai.fedml.fedmlsdk.FedMlTaskListener;
+import ai.fedml.fedmlsdk.listeners.OnRegisterListener;
 import ai.fedml.fedmlsdk.utils.CompressUtils;
 import ai.fedml.fedmlsdk.utils.DeviceUtils;
 import ai.fedml.fedmlsdk.utils.StorageUtils;
@@ -49,7 +46,7 @@ public class TrainingExecutor {
     private String executorTopic = "executorTopic";
     private TrainingTaskParam trainingTaskParam;
     private final MqttConnectOptions connOpts;
-    private FedMlTaskListener mFedMlTaskListener;
+    private OnRegisterListener onRegisterListener;
 
     public TrainingExecutor(@NonNull final String baseUrl, @NonNull final String broker) {
         executorService = new Retrofit.Builder()
@@ -66,59 +63,34 @@ public class TrainingExecutor {
     }
 
     public void init() {
-        registerDevice(DeviceInfo.builder().deviceId(DeviceUtils.getsDeviceId()).build());
         initMqttClient();
     }
 
-    public void setFedMlTaskListener(FedMlTaskListener listener) {
-        mFedMlTaskListener = listener;
-    }
-
-    public void registerDevice(@NonNull DeviceInfo deviceInfo) {
+    public void registerDevice(final OnRegisterListener listener) {
+        onRegisterListener = listener;
+        final DeviceInfo deviceInfo = DeviceInfo.builder().deviceId(DeviceUtils.getsDeviceId()).build();
         Call<ExecutorResponse> call = executorService.registerDevice(deviceInfo.getDeviceId());
         call.enqueue(new Callback<ExecutorResponse>() {
             @Override
             public void onResponse(@NotNull Call<ExecutorResponse> call, @NotNull Response<ExecutorResponse> response) {
                 ExecutorResponse executorResponse = response.body();
+                Log.d(TAG, "onResponse: " + executorResponse);
                 if (executorResponse != null) {
                     executorId = executorResponse.getExecutorId();
                     executorTopic = executorResponse.getExecutorTopic();
                     trainingTaskParam = executorResponse.getTrainingTaskArgs();
-                    if (mFedMlTaskListener != null) {
-                        mFedMlTaskListener.onReceive(trainingTaskParam);
+                    if (onRegisterListener != null) {
+                        onRegisterListener.onRegisterReceived(executorId, trainingTaskParam);
                     }
                 }
-                Log.d(TAG, "onResponse: " + executorResponse);
             }
 
             @Override
             public void onFailure(@NotNull Call<ExecutorResponse> call, @NotNull Throwable t) {
                 Log.w(TAG, "onFailure: ", t);
-                if (mFedMlTaskListener != null) {
-                    mFedMlTaskListener.onReceive(null);
+                if (onRegisterListener != null) {
+                    onRegisterListener.onRegisterReceived(null, null);
                 }
-            }
-        });
-    }
-
-    public void onLine(DeviceInfo deviceInfo) {
-        final String json = gson.toJson(deviceInfo);
-        Log.d(TAG, "onLine: " + json);
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody req = RequestBody.create(json, mediaType);
-        Call<ResponseBody> call = executorService.deviceOnLine(req);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                DeviceOnLineResponse onLineResponse = gson.fromJson(new InputStreamReader(response.body().byteStream()),
-                        DeviceOnLineResponse.class);
-                Log.d(TAG, "onResponse: " + onLineResponse);
-                executorTopic = onLineResponse.getExecutorTopic();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.w(TAG, "onFailure: ", t);
             }
         });
     }
@@ -146,7 +118,7 @@ public class TrainingExecutor {
         });
     }
 
-    public void downloadFile(@NonNull final String dataSetName, @NonNull final String fileName, @NonNull final String url) {
+    public void downloadUnzipDataSet(@NonNull final String dataSetName, @NonNull final String fileName, @NonNull final String url) {
         Call<ResponseBody> call = executorService.downloadFile(url);
         call.enqueue(new Callback<ResponseBody>() {
             @Override

@@ -2,6 +2,8 @@ package ai.fedml.fedmlsdk;
 
 import android.content.Context;
 
+import ai.fedml.fedmlsdk.listeners.FedMlTaskListener;
+import ai.fedml.fedmlsdk.listeners.OnRegisterListener;
 import androidx.annotation.NonNull;
 
 import ai.fedml.fedmlsdk.trainingexecutor.TrainingExecutor;
@@ -10,34 +12,27 @@ class FedMlMobileImpl implements FedMlMobileApi {
     private TrainingExecutor mTrainingExecutor;
 
     @Override
-    public void init(@NonNull Context context, @NonNull String baseUrl, @NonNull String broker) {
+    public void init(@NonNull Context context, @NonNull String baseUrl, @NonNull String broker,
+                     @NonNull final OnRegisterListener listener) {
         ContextHolder.initialize(context);
-        registerDevice(baseUrl, broker);
-    }
-
-    private void registerDevice(@NonNull final String baseUrl, @NonNull final String broker) {
         mTrainingExecutor = new TrainingExecutor(baseUrl, broker);
         mTrainingExecutor.init();
+        mTrainingExecutor.registerDevice(listener);
     }
 
     @Override
-    public boolean uploadFile(@NonNull final String fileName, @NonNull final String filePath) {
+    public void uploadFile(@NonNull final String fileName, @NonNull final String filePath) {
         mTrainingExecutor.uploadFile(fileName, filePath);
-        return true;
     }
 
     @Override
-    public void downloadFile(@NonNull String dataSetName, @NonNull String fileName, @NonNull String url) {
-        mTrainingExecutor.downloadFile(dataSetName, fileName, url);
+    public void downloadUnzipDataSet(@NonNull String dataSetName, @NonNull String fileName,
+                                     @NonNull String url) {
+        mTrainingExecutor.downloadUnzipDataSet(dataSetName, fileName, url);
     }
 
     @Override
     public void sendMessage(@NonNull String msg) {
         mTrainingExecutor.sendMessage(msg);
-    }
-
-    @Override
-    public void setFedMlTaskListener(FedMlTaskListener listener) {
-        mTrainingExecutor.setFedMlTaskListener(listener);
     }
 }
