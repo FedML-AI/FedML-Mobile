@@ -28,13 +28,6 @@ public class DaemonService extends Service {
             startService(innerIntent);
             startForeground(GRAY_SERVICE_ID, new Notification());
         }
-
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        Intent alarmIntent = new Intent();
-//        alarmIntent.setAction(WakeReceiver.GRAY_WAKE_ACTION);
-//        PendingIntent operation = PendingIntent.getBroadcast(this, WAKE_REQUEST_CODE, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), ALARM_INTERVAL, operation);
-
         return START_STICKY;
     }
 

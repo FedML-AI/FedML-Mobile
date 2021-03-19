@@ -3,8 +3,7 @@ package ai.fedml.iot;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
-import ai.fedml.iot.utils.LogUtils;
+import android.util.Log;
 
 
 public class AutoStartReceiver extends BroadcastReceiver {
@@ -12,6 +11,6 @@ public class AutoStartReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        LogUtils.d(TAG, "ACTION = " + intent.getAction() );
+        Log.d(TAG, "ACTION = " + intent.getAction() );
     }
 }

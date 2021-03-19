@@ -7,9 +7,9 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 
 import ai.fedml.iot.device.DeviceUtil;
-import ai.fedml.iot.utils.LogUtils;
 import ai.fedml.iot.utils.ServiceUtils;
 
 abstract class BaseServiceManager {
@@ -30,28 +30,26 @@ abstract class BaseServiceManager {
 
         @Override
         public void run() {
-            LogUtils.d(TAG, "SDK ServiceKeepAliveThread start Success, mIsRunning = " + mIsRunning);
+            Log.d(TAG, "SDK ServiceKeepAliveThread start Success, mIsRunning = " + mIsRunning);
             try {
                 while (mIsRunning) {
                     checkServiceState();
                     Thread.sleep(2000);
                 }
             } catch (InterruptedException e) {
-                LogUtils.i(TAG, e.toString());
+                Log.i(TAG, e.toString());
             }
         }
 
         public void stopThread() {
             mIsRunning = false;
-            LogUtils.d(TAG, "stop SDK ServiceKeepAliveThread");
+            Log.d(TAG, "stop SDK ServiceKeepAliveThread");
         }
     }
 
     private void checkServiceState() {
         if (!mServiceConnected) {
-            if (LogUtils.isLogEnable()) {
-                LogUtils.v(TAG, "checkServiceState, mServiceConnected " + mServiceConnected + ", isDestroy = " + isDestroy + ", mContext = " + mContext);
-            }
+            Log.v(TAG, "checkServiceState, mServiceConnected " + mServiceConnected + ", isDestroy = " + isDestroy + ", mContext = " + mContext);
             if (!isDestroy && mContext != null) {
                 startAndBindService();
             }
@@ -61,14 +59,14 @@ abstract class BaseServiceManager {
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            LogUtils.d(TAG, "onServiceDisconnected, isDestroy = " + isDestroy + ", mServiceConnected = " + mServiceConnected);
+            Log.d(TAG, "onServiceDisconnected, isDestroy = " + isDestroy + ", mServiceConnected = " + mServiceConnected);
             mServiceConnected = false;
             BaseServiceManager.this.onServiceDisconnected(name);
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            LogUtils.d(TAG, "onServiceConnected, isDestroy = " + isDestroy + ", mServiceConnected = " + mServiceConnected + ", action = " + mServiceAction);
+            Log.d(TAG, "onServiceConnected, isDestroy = " + isDestroy + ", mServiceConnected = " + mServiceConnected + ", action = " + mServiceAction);
             mServiceConnected = true;
 
             if (isDestroy) {
@@ -91,7 +89,7 @@ abstract class BaseServiceManager {
 
     public void init(Context context) {
         synchronized (this) {
-            LogUtils.i(TAG, "init start");
+            Log.i(TAG, "init start");
             if (context == null) {
                 throw new RuntimeException("context is null");
             }
@@ -105,7 +103,7 @@ abstract class BaseServiceManager {
                     mKeepAliveThread.start();
                 }
             }, 5000);
-            LogUtils.i(TAG, "init end");
+            Log.i(TAG, "init end");
         }
     }
 
@@ -126,51 +124,40 @@ abstract class BaseServiceManager {
         }
     }
 
-    public void unbindService(){
+    public void unbindService() {
         if (mServiceConnected) {
             mContext.unbindService(mServiceConnection);
             mServiceConnected = false;
-
-//            Intent intent = getMatchIntent(mContext, mServiceAction);
-//            mContext.stopService(intent);
         }
     }
 
     private void startAndBindService() {
         Context context = mContext;
         if (context == null) {
-            if (LogUtils.isLogEnable()) {
-                LogUtils.d(TAG, "startAndBindService, context = null, return");
-            }
+            Log.d(TAG, "startAndBindService, context = null, return");
             return;
         }
         String hostPkg = DeviceUtil.getAppPackageName(context);
-        LogUtils.d(TAG, "hostPkg = " + hostPkg);
+        Log.d(TAG, "hostPkg = " + hostPkg);
         Intent intent = getMatchIntent(context, mServiceAction);
         try {
             if (intent != null) {
                 //context.startService(intent);
                 boolean ret = context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-                if (LogUtils.isLogEnable()) {
-                    LogUtils.e(TAG, "bindService startService and bind " + ret);
-                }
+                Log.e(TAG, "bindService startService and bind " + ret);
             } else {
-                if (LogUtils.isLogEnable()) {
-                    LogUtils.e(TAG, "can not find intent for action " + mServiceAction + " in " + hostPkg);
-                }
+                Log.e(TAG, "can not find intent for action " + mServiceAction + " in " + hostPkg);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtils.e(TAG, "bindService error", e);
+            Log.e(TAG, "bindService error", e);
         }
     }
 
     protected Intent getMatchIntent(Context context, String action) {
         String hostPkg = DeviceUtil.getAppPackageName(context);
         Intent intent = ServiceUtils.getMatchIntentInPackage(context, new Intent(action), hostPkg);
-        if (LogUtils.isLogEnable()) {
-            LogUtils.i(TAG, "bindService, hostPkg = " + hostPkg + " intent:" + intent);
-        }
+        Log.i(TAG, "bindService, hostPkg = " + hostPkg + " intent:" + intent);
         return intent;
     }
 

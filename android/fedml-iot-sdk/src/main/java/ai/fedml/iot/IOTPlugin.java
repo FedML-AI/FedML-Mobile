@@ -3,8 +3,6 @@ package ai.fedml.iot;
 import android.app.Application;
 import android.os.Bundle;
 
-import ai.fedml.iot.utils.LogUtils;
-
 public class IOTPlugin {
     private String TAG = Config.COMMON_TAG + getClass().getSimpleName();
 

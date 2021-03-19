@@ -7,8 +7,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
-import ai.fedml.iot.Config;
-
 import java.util.HashMap;
 
 public class NetworkUtils {

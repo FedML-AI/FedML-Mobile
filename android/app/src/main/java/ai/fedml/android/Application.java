@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import ai.fedml.iot.IOTCore;
 import ai.fedml.iot.MyUncaughtExceptionHandler;
-import ai.fedml.iot.utils.LogUtils;
 
 public class Application extends android.app.Application {
 
@@ -62,7 +62,7 @@ public class Application extends android.app.Application {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogUtils.d(TAG, "ACTION = " + intent.getAction());
+            Log.d(TAG, "ACTION = " + intent.getAction());
             if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
 
             } else if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
@@ -80,7 +80,7 @@ public class Application extends android.app.Application {
     };
 
     private void onNetworkChanged(boolean isConnected, int networkType) {
-        LogUtils.d(TAG, "onNetworkChanged. isConnected = " + isConnected);
+        Log.d(TAG, "onNetworkChanged. isConnected = " + isConnected);
         if (isConnected) {
             // do nothing
         }

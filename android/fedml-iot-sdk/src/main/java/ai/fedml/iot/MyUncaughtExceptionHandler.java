@@ -4,9 +4,8 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
-
-import ai.fedml.iot.utils.LogUtils;
 
 public class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
@@ -24,20 +23,18 @@ public class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandl
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        if (mApplication.getPackageName().equals(getProcessName(mApplication)))  {
+        if (mApplication.getPackageName().equals(getProcessName(mApplication))) {
             if (bShowLog) {
-                LogUtils.e(TAG, "uncaughtException, show log");
+                Log.e(TAG, "uncaughtException, show log");
                 mUncaughtExceptionHandler.uncaughtException(thread, ex);
             } else {
-                LogUtils.e(TAG, "toast Sorry");
-                //toastSorry();
-                restart();
+                Log.e(TAG, "toast Sorry");
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         } else {
-            LogUtils.e(TAG, "kill process directly!");//here
+            Log.e(TAG, "kill process directly!");//here
             ex.printStackTrace();
-            if(bDebugMode){
+            if (bDebugMode) {
                 toastSorry();
             }
             try {
@@ -50,7 +47,7 @@ public class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandl
     }
 
     private void toastSorry() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 Looper.prepare();
@@ -74,25 +71,5 @@ public class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandl
             }
         }
         return currentProcessName;
-    }
-
-    private void restart() {
-        LogUtils.e(TAG, "restart");
-//        try {
-//            Thread.sleep(4000);
-//        } catch (InterruptedException e) {
-//            android.util.Log.e(TAG, "error : " + e);
-//        }
-//        Intent intent = new Intent(
-//                mApplication.getApplicationContext(),
-//                MainActivity.class);
-//        @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
-//                mApplication.getApplicationContext(), 0, intent,
-//                Intent.FLAG_ACTIVITY_NEW_TASK);
-
-//        AlarmManager mgr = (AlarmManager) mApplication.getSystemService(Context.ALARM_SERVICE);
-//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000,
-//                restartIntent);
-
     }
 }

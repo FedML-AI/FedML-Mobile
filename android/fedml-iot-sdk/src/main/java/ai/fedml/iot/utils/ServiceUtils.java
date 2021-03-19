@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.UserHandle;
+import android.util.Log;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ServiceUtils {
             resolveInfo = pm.queryIntentServices(implicitIntent, 0);
         } catch (Exception ex) {
             // bugly:android.os.DeadObjectException:
-            LogUtils.e("ServiceUtils", ex.toString());
+            Log.e("ServiceUtils", ex.toString());
             resolveInfo = null;
         }
 
@@ -63,7 +64,7 @@ public class ServiceUtils {
             resolveInfo = pm.queryIntentServices(implicitIntent, 0);
         } catch (Exception ex) {
             // bugly:android.os.DeadObjectException:
-            LogUtils.e("ServiceUtils", ex.toString());
+            Log.e("ServiceUtils", ex.toString());
             resolveInfo = null;
         }
 

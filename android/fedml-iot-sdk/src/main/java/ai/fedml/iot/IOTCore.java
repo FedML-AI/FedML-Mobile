@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import ai.fedml.iot.service.IOTServiceServiceManager;
-import ai.fedml.iot.utils.LogUtils;
 
 public class IOTCore {
     private static final String TAG = IOTCore.class.getSimpleName();
+    public final static String BROADCAST_RELOAD_PLUGIN = "ai.fedml.iovclient.RELOAD_PLUGIN";
 
     private static final IOTCore ourInstance = new IOTCore();
 
@@ -31,9 +31,6 @@ public class IOTCore {
         //catch exception
         Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(mApplication));
 
-        //open log
-        LogUtils.setLogEnable(true);
-
         //init process keeping alive service
         mContext.startService(new Intent(mContext, DaemonService.class));
 
@@ -52,7 +49,7 @@ public class IOTCore {
         return mContext;
     }
 
-    public void unInit(){
+    public void unInit() {
         IOTServiceServiceManager.getInstance().destroy();
         unRegisterBroadcast();
     }
@@ -60,7 +57,7 @@ public class IOTCore {
 
     private void registerBroadcast() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Config.BROADCAST_RELOAD_PLUGIN);
+        filter.addAction(BROADCAST_RELOAD_PLUGIN);
         mContext.registerReceiver(mSystemBroadcastReceiver, filter);
     }
 
@@ -72,12 +69,10 @@ public class IOTCore {
         }
     }
 
-    private BroadcastReceiver mSystemBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mSystemBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Config.BROADCAST_RELOAD_PLUGIN.equals(intent.getAction())) {
-                IOTServiceServiceManager.getInstance().unbindService();
-            }
+            IOTServiceServiceManager.getInstance().unbindService();
         }
     };
 }
