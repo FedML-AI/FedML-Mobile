@@ -1,3 +1,5 @@
+### Note: An upgraded version is maintained at FedML repo: https://github.com/FedML-AI/FedML/tree/master/android
+
 # FedML-Mobile: Federated Learning Research Library for Android and iOS Smartphones (supported by FedML framework)
 
 # Installation
